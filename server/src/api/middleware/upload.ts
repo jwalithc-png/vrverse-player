@@ -35,8 +35,8 @@ const storage = multer.diskStorage({
 /** File filter — only allow supported video formats */
 const fileFilter = (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
   const ext = path.extname(file.originalname).toLowerCase();
-  const isAllowedExt = config.upload.allowedExtensions.includes(ext);
-  const isAllowedMime = config.upload.allowedMimeTypes.includes(file.mimetype) || file.mimetype.startsWith('video/');
+  const isAllowedExt = (config.upload.allowedExtensions as readonly string[]).includes(ext);
+  const isAllowedMime = (config.upload.allowedMimeTypes as readonly string[]).includes(file.mimetype) || file.mimetype.startsWith('video/');
 
   if (isAllowedExt || isAllowedMime) {
     cb(null, true);

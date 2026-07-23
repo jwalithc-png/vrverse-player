@@ -16,12 +16,13 @@ export const settingsController = {
 
   /** Get a specific setting */
   get(req: Request, res: Response): void {
-    const value = SettingsModel.get(req.params.key);
+    const key = req.params.key as string;
+    const value = SettingsModel.get(key);
     if (value === undefined) {
       res.status(404).json({ error: 'Setting not found' });
       return;
     }
-    res.json({ key: req.params.key, value });
+    res.json({ key, value });
   },
 
   /** Update a setting */

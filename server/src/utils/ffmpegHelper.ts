@@ -57,13 +57,13 @@ export function getVideoMetadata(filePath: string): Promise<VideoMetadata> {
       }
 
       resolve({
-        duration: parseFloat(data.format.duration || '0'),
+        duration: typeof data.format.duration === 'number' ? data.format.duration : parseFloat(String(data.format.duration || 0)),
         width: videoStream.width || 0,
         height: videoStream.height || 0,
         fps,
         codec: videoStream.codec_name || 'unknown',
-        bitrate: parseInt(data.format.bit_rate || '0'),
-        size: parseInt(data.format.size || '0'),
+        bitrate: typeof data.format.bit_rate === 'number' ? data.format.bit_rate : parseInt(String(data.format.bit_rate || 0)),
+        size: typeof data.format.size === 'number' ? data.format.size : parseInt(String(data.format.size || 0)),
         format: data.format.format_name || 'unknown',
       });
     });

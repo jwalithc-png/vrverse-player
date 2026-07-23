@@ -74,7 +74,8 @@ export const videoController = {
 
   /** Get a video by ID */
   getById(req: Request, res: Response): void {
-    const video = VideoModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const video = VideoModel.getById(id);
     if (!video) {
       res.status(404).json({ error: 'Video not found' });
       return;
@@ -84,10 +85,11 @@ export const videoController = {
 
   /** Stream a video file (supports range requests for seeking) */
   stream(req: Request, res: Response): void {
-    logger.info(`Stream requested for video: ${req.params.id}`);
-    const video = VideoModel.getById(req.params.id);
+    const id = req.params.id as string;
+    logger.info(`Stream requested for video: ${id}`);
+    const video = VideoModel.getById(id);
     if (!video) {
-      logger.error(`Stream error: Video ${req.params.id} not found in database`);
+      logger.error(`Stream error: Video ${id} not found in database`);
       res.status(404).json({ error: 'Video not found' });
       return;
     }
@@ -130,7 +132,8 @@ export const videoController = {
 
   /** Delete a video */
   delete(req: Request, res: Response): void {
-    const video = VideoModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const video = VideoModel.getById(id);
     if (!video) {
       res.status(404).json({ error: 'Video not found' });
       return;
@@ -141,7 +144,7 @@ export const videoController = {
     if (video.thumbnailPath) safeDelete(video.thumbnailPath);
 
     // Delete record
-    VideoModel.delete(req.params.id);
+    VideoModel.delete(id);
     res.json({ success: true, message: 'Video deleted' });
   },
 
@@ -153,19 +156,21 @@ export const videoController = {
       return;
     }
 
-    const video = VideoModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const video = VideoModel.getById(id);
     if (!video) {
       res.status(404).json({ error: 'Video not found' });
       return;
     }
 
-    VideoModel.rename(req.params.id, name);
+    VideoModel.rename(id, name);
     res.json({ success: true, message: 'Video renamed' });
   },
 
   /** Serve a thumbnail image */
   thumbnail(req: Request, res: Response): void {
-    const video = VideoModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const video = VideoModel.getById(id);
     if (!video || !video.thumbnailPath) {
       res.status(404).json({ error: 'Thumbnail not found' });
       return;

@@ -154,7 +154,7 @@ export class JobQueue<T = any> {
 
     try {
       const result = await this.processor(job);
-      if (job.status === 'cancelled') return;
+      if ((job.status as string) === 'cancelled') return;
 
       job.status = 'completed';
       job.result = result;
@@ -163,7 +163,7 @@ export class JobQueue<T = any> {
       this.emit('completed', job);
       logger.success(`Job ${jobId} completed`);
     } catch (err: any) {
-      if (job.status === 'cancelled') return;
+      if ((job.status as string) === 'cancelled') return;
 
       job.status = 'failed';
       job.error = err.message;

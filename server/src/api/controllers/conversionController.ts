@@ -103,13 +103,14 @@ export const conversionController = {
 
   /** Get conversion status */
   getStatus(req: Request, res: Response): void {
-    const conversion = ConversionModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const conversion = ConversionModel.getById(id);
     if (!conversion) {
       res.status(404).json({ error: 'Conversion not found' });
       return;
     }
 
-    const queueJob = conversionQueue.getJob(req.params.id);
+    const queueJob = conversionQueue.getJob(id);
 
     res.json({
       conversion,
@@ -120,7 +121,7 @@ export const conversionController = {
 
   /** Cancel a conversion */
   cancel(req: Request, res: Response): void {
-    const conversionId = req.params.id;
+    const conversionId = req.params.id as string;
 
     // Cancel in pipeline (stops FFmpeg)
     const pipelineCancelled = pipeline.cancelConversion(conversionId);
@@ -147,13 +148,14 @@ export const conversionController = {
 
   /** Get conversions for a specific video */
   getByVideo(req: Request, res: Response): void {
-    const conversions = ConversionModel.getByVideoId(req.params.videoId);
+    const conversions = ConversionModel.getByVideoId(req.params.videoId as string);
     res.json({ conversions });
   },
 
   /** Delete a conversion record */
   delete(req: Request, res: Response): void {
-    const conversion = ConversionModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const conversion = ConversionModel.getById(id);
     if (!conversion) {
       res.status(404).json({ error: 'Conversion not found' });
       return;
@@ -167,14 +169,15 @@ export const conversionController = {
       }
     }
 
-    ConversionModel.delete(req.params.id);
+    ConversionModel.delete(id);
     res.json({ success: true, message: 'Conversion deleted' });
   },
 
   /** Stream converted video */
   stream(req: Request, res: Response): void {
-    logger.info(`Stream requested for conversion: ${req.params.id}`);
-    const conversion = ConversionModel.getById(req.params.id);
+    const id = req.params.id as string;
+    logger.info(`Stream requested for conversion: ${id}`);
+    const conversion = ConversionModel.getById(id);
     if (!conversion || !conversion.outputPath) {
       logger.error(`Stream error: Conversion ${req.params.id} or outputPath not found`);
       res.status(404).json({ error: 'Converted video not found' });
@@ -217,7 +220,8 @@ export const conversionController = {
 
   /** Download converted video */
   download(req: Request, res: Response): void {
-    const conversion = ConversionModel.getById(req.params.id);
+    const id = req.params.id as string;
+    const conversion = ConversionModel.getById(id);
     if (!conversion || !conversion.outputPath) {
       res.status(404).json({ error: 'Converted video not found' });
       return;
