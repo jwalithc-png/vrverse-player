@@ -1,0 +1,23 @@
+services:
+  vrverse-player:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: vrverse_app
+    ports:
+      - "3001:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=production
+    volumes:
+      - vrverse_uploads:/app/uploads
+      - vrverse_output:/app/output
+      - vrverse_thumbnails:/app/thumbnails
+      - vrverse_data:/app/server/data
+    restart: unless-stopped
+
+volumes:
+  vrverse_uploads:
+  vrverse_output:
+  vrverse_thumbnails:
+  vrverse_data:
