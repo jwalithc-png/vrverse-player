@@ -6,7 +6,7 @@
 
 import path from 'path';
 
-const BASE_DIR = process.env.VRVERSE_BASE_DIR || 'D:\\vrverse-player';
+const BASE_DIR = process.env.VRVERSE_BASE_DIR || path.resolve(__dirname, '../../..');
 
 export const config = {
   /** Server port */
