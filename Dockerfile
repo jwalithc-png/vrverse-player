@@ -1,32 +1,35 @@
 FROM node:20-slim
 
-# Install FFmpeg and required media libraries
+# Install FFmpeg and build tools for native modules (better-sqlite3)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     ca-certificates \
+    python3 \
+    make \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copy root & workspace package files first for optimized Docker caching
-COPY package*.json ./
-COPY client/package*.json ./client/
-COPY server/package*.json ./server/
-
-# Install dependencies for all workspaces
-RUN npm run install:all
-
-# Copy full application source code
+# Copy all source code
 COPY . .
 
-# Build client static assets and compile server TypeScript
+# Install all dependencies (npm workspaces auto-installs client + server)
+RUN npm install --include=dev
+
+# Build client static assets
 RUN npm run build --workspace=client
+
+# Build server TypeScript
 RUN npm run build --workspace=server
 
-# Set production environment variables
+# Create required directories
+RUN mkdir -p uploads output thumbnails temp data
+
+# Production settings
 ENV NODE_ENV=production
 ENV PORT=3001
 EXPOSE 3001
 
-# Start the unified backend server
+# Start server (serves both API + client static files)
 CMD ["npm", "run", "start", "--workspace=server"]
